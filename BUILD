@@ -13,12 +13,6 @@
 # limitations under the License.
 
 load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
-
-load("//bazel:tcl_wrap_cc.bzl", "tcl_wrap_cc")
-load("//bazel:flex.bzl", "genlex")
-load("//bazel:bison.bzl", "genyacc")
-load("//bazel:tcl_encode.bzl", "tcl_encode")
-
 load(
     "//:build_helper.bzl",
     "OPENROAD_BINARY_DEPS",
@@ -32,15 +26,19 @@ load(
     "OPENROAD_LIBRARY_SRCS_EXCLUDE",
     "OPENROAD_LIBRARY_SRCS_INCLUDE",
 )
+load("//bazel:bison.bzl", "genyacc")
+load("//bazel:flex.bzl", "genlex")
+load("//bazel:tcl_encode.bzl", "tcl_encode")
+load("//bazel:tcl_wrap_cc.bzl", "tcl_wrap_cc")
 
 package(
+    default_visibility = ["//:__subpackages__"],
     features = [
         "-parse_headers",
         "-layering_check",
         # TODO(b/299593765): Fix strict ordering.
         "-libcxx_assertions",
     ],
-    default_visibility = ["//:__subpackages__"],
 )
 
 # OpenRoad Physical Synthesis
@@ -900,13 +898,27 @@ cc_library(
         "src/utl/include/utl/*.h",
         "src/odb/src/db/*.h",
     ]) + [
-        "src/odb/src/def/def/defiAlias.hpp",
-        "src/odb/src/def/def/defrReader.hpp",
-        "src/odb/src/def/def/defwWriter.hpp",
+         # these should not be here, they should come as a dependency
+	 # with //src/lef/src/lef once we have that
+        "src/odb/src/lef/lef/lefiArray.hpp",
+        "src/odb/src/lef/lef/lefiCrossTalk.hpp",
         "src/odb/src/lef/lef/lefiDebug.hpp",
+        "src/odb/src/lef/lef/lefiDefs.hpp",
+        "src/odb/src/lef/lef/lefiKRDefs.hpp",
+        "src/odb/src/lef/lef/lefiLayer.hpp",
+        "src/odb/src/lef/lef/lefiMacro.hpp",
+        "src/odb/src/lef/lef/lefiMisc.hpp",
+        "src/odb/src/lef/lef/lefiNonDefault.hpp",
+        "src/odb/src/lef/lef/lefiProp.hpp",
+        "src/odb/src/lef/lef/lefiPropType.hpp",
+        "src/odb/src/lef/lef/lefiUnits.hpp",
+        "src/odb/src/lef/lef/lefiUser.hpp",
         "src/odb/src/lef/lef/lefiUtil.hpp",
+        "src/odb/src/lef/lef/lefiVia.hpp",
+        "src/odb/src/lef/lef/lefiViaRule.hpp",
         "src/odb/src/lef/lef/lefrReader.hpp",
         "src/odb/src/lef/lef/lefwWriter.hpp",
+        "src/odb/src/lef/lefzlib/lefzlib.hpp",
     ],
     copts = [
         "-fexceptions",
@@ -918,14 +930,14 @@ cc_library(
     includes = [
         "src/odb/include",
         "src/odb/include/odb",
-        "src/odb/src/def/def",
-        "src/odb/src/def/defzlib",
         "src/odb/src/def/lefzlib",
         "src/odb/src/lef/lef",
         "src/odb/src/lef/lefin",
         "src/odb/src/lef/lefzlib",
     ],
     deps = [
+        "//src/odb/src/def",
+        "//src/odb/src/def:defzlib",
         "//src/utl",
         "@boost.algorithm",
         "@boost.bind",
@@ -938,9 +950,9 @@ cc_library(
         "@boost.polygon",
         "@boost.property_tree",
         "@boost.spirit",
-	"@spdlog",
-        "@zlib",
+        "@spdlog",
         "@tk_tcl//:tcl",
+        "@zlib",
     ],
 )
 
@@ -985,60 +997,6 @@ cc_library(
         "//src/utl",
         "@zlib",
     ],
-)
-
-cc_library(
-    name = "opendb_def",
-    srcs = glob(
-        include = [
-            "src/odb/src/def/def/*.cpp",
-            "src/odb/src/def/def/*.h",
-            "src/odb/src/def/def/*.hpp",
-            "src/odb/src/def/defzlib/*.hpp",
-            "src/odb/src/def/defzlib/*.cpp",
-        ],
-        exclude = [
-            "src/odb/src/def/def/defiComponent.hpp",
-            "src/odb/src/def/def/defiUtil.hpp",
-        ],
-    ) + [
-        "src/odb/src/def/def/def_parser.cpp",
-        "src/odb/src/def/def/def_parser.hpp",
-    ],
-    hdrs = glob([
-        "src/odb/include/odb/*.h",
-        "src/odb/include/odb/*.hpp",
-    ]) + [
-        "src/odb/src/def/def/defiAlias.hpp",
-        "src/odb/src/def/def/defiComponent.hpp",
-        "src/odb/src/def/def/defiUtil.hpp",
-        "src/odb/src/def/def/defrReader.hpp",
-        "src/odb/src/def/def/defwWriter.hpp",
-        "src/odb/src/def/defzlib/defzlib.hpp",
-    ],
-    copts = [
-        "-fexceptions",
-        "-Wno-error",
-    ],
-    features = ["-use_header_modules"],
-    includes = [
-        "src/odb/include/odb",
-        "src/odb/src/def/def",
-        "src/odb/src/def/defzlib",
-    ],
-    deps = [
-        "//src/utl",
-        ":opendb_lib",
-        "@zlib",
-    ],
-)
-
-genyacc(
-    name = "def_bison",
-    src = "src/odb/src/def/def/def.y",
-    header_out = "src/odb/src/def/def/def_parser.hpp",
-    prefix = "defyy",
-    source_out = "src/odb/src/def/def/def_parser.cpp",
 )
 
 genyacc(
@@ -1367,11 +1325,11 @@ cc_library(
         "src/sta/util/Machine.cc",
         ":StaConfig",
     ] + select({
-            "@platforms//os:windows": ["src/sta/util/MachineWin32.cc"],
-            "@platforms//os:osx": ["src/sta/util/MachineApple.cc"],
-            "@platforms//os:linux": ["src/sta/util/MachineLinux.cc"],
-            "//conditions:default": ["src/sta/util/MachineUnknown.cc"],
-        }),
+        "@platforms//os:windows": ["src/sta/util/MachineWin32.cc"],
+        "@platforms//os:osx": ["src/sta/util/MachineApple.cc"],
+        "@platforms//os:linux": ["src/sta/util/MachineLinux.cc"],
+        "//conditions:default": ["src/sta/util/MachineUnknown.cc"],
+    }),
     hdrs = glob(
         include = ["src/sta/include/sta/*.hh"],
     ),
@@ -1406,16 +1364,16 @@ cc_library(
     textual_hdrs = ["src/sta/util/MachineLinux.cc"],
     deps = [
         "//bazel:flex",
-        "@eigen//:eigen",
-        "@zlib",
+        "@eigen",
         "@tk_tcl//:tcl",
+        "@zlib",
     ],
 )
 
 filegroup(
     name = "tcl_util",
     srcs = [
-       "src/sta/tcl/Util.tcl",
+        "src/sta/tcl/Util.tcl",
     ],
 )
 
