@@ -14,19 +14,16 @@ def genyacc(
         extra_outs = []):
     """Build rule for generating C or C++ sources with Bison.
     """
-    # how can I pass PREFIX_OPTION to the cmd ?
-    PREFIX_OPTION='-P ' + prefix if prefix else ''
-    if prefix:
-        print("TODO(hzeller): add bison prefix support: {}".format(PREFIX_OPTION))
+    PREFIX_OPTION='--name-prefix=' + prefix if prefix else ''
 
     native.genrule(
         name = name,
         srcs = [src],
         outs = [header_out, source_out] + extra_outs,
         cmd = select({
-            "//bazel:use_local_flex_bison_enabled": "bison --defines=$(location " + header_out + ") --output-file=$(location " + source_out + ") " + " ".join(extra_options) + " $<",
-            "@platforms//os:windows": "win_bison.exe --defines=$(location " + header_out + ") --output-file=$(location " + source_out + ") " + " ".join(extra_options) + " $<",
-            "//conditions:default": "M4=$(M4) $(BISON) --defines=$(location " + header_out + ") --output-file=$(location " + source_out + ") " + " ".join(extra_options) + " $<",
+            "//bazel:use_local_flex_bison_enabled": "bison --defines=$(location " + header_out + ") --output-file=$(location " + source_out + ") " + " ".join(extra_options) + PREFIX_OPTION + " $<",
+            "@platforms//os:windows": "win_bison.exe --defines=$(location " + header_out + ") --output-file=$(location " + source_out + ") " + " ".join(extra_options) + PREFIX_OPTION + " $<",
+            "//conditions:default": "M4=$(M4) $(BISON) --defines=$(location " + header_out + ") --output-file=$(location " + source_out + ") " + " ".join(extra_options) + PREFIX_OPTION + " $<",
         }),
         toolchains = select({
             "//bazel:use_local_flex_bison_enabled": [],
