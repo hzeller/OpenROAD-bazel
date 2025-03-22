@@ -14,3 +14,20 @@ http_archive(
         "https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz",
     ],
 )
+
+http_archive(
+    name = "lemon",
+    build_file = "//bazel/lemon:bundled.BUILD.bazel",
+    patch_args = [
+        "-p1",
+    ],
+    patches = [
+        "//bazel/lemon:lemon.patch",
+        "//bazel/lemon:allocator-patch.patch",
+    ],
+    sha256 = "a7f28821431b76505966e9a34c94c180130f6162ed2fc59ade8a685b5d5dcfeb",
+    strip_prefix = "lemon-1.3.1",
+    urls = [
+        "https://github.com/QuantamHD/lemon/archive/refs/tags/1.3.1.tar.gz",
+    ],
+)
