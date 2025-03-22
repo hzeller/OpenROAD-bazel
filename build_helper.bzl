@@ -1,12 +1,15 @@
 """Source Tracking for OpenROAD"""
 
+# NOTE: all this should go once properly converted to a bazel project, and
+# the local dependencies listed where needed.
+
 OPENROAD_BINARY_SRCS_WITHOUT_MAIN = [
     #Root OpenRoad
     ":openroad_swig",
     ":openroad_tcl",
     #Utility
-    ":logger_swig",
-    ":utl_tcl",
+    "//src/utl:logger_swig",
+    "//src/utl:utl_tcl",
     #InitFp
     ":init_floorplan_swig",
     ":init_floorplan_tcl",
@@ -114,7 +117,7 @@ OPENROAD_DEFINES = [
 ]
 
 OPENROAD_BINARY_DEPS = [
-    ":logger",
+     "//src/utl",
     ":opendb_lib",
     ":openroad_version",
     ":opensta_lib",
@@ -290,7 +293,7 @@ OPENROAD_LIBRARY_INCLUDES = [
 ]
 
 OPENROAD_LIBRARY_DEPS = [
-    ":logger",
+     "//src/utl",
     ":munkres",
     ":openroad_version",
     ":opensta_lib",

@@ -1,5 +1,5 @@
 # Copyright 2021 Google LLC
-#
+# -*- Python -*-
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("@//:tcl_wrap_cc.bzl", "tcl_wrap_cc")
-
-# load("", "py_extension")
-# load("", "py_library")
 load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
 
+load("//bazel:tcl_wrap_cc.bzl", "tcl_wrap_cc")
 load("//bazel:flex.bzl", "genlex")
 load("//bazel:bison.bzl", "genyacc")
 load("//bazel:tcl_encode.bzl", "tcl_encode")
+
 load(
     "//:build_helper.bzl",
     "OPENROAD_BINARY_DEPS",
@@ -42,7 +40,7 @@ package(
         # TODO(b/299593765): Fix strict ordering.
         "-libcxx_assertions",
     ],
-    default_visibility = ["//visibility:private"],
+    default_visibility = ["//:__subpackages__"],
 )
 
 # OpenRoad Physical Synthesis
@@ -171,49 +169,6 @@ genrule(
     outs = ["src/stt/src/flt/etc/POWV9.cpp"],
     cmd = "$(location @tk_tcl//:tclsh) $(location src/stt/src/flt/etc/MakeDatVar.tcl) powv9 \"$@\" $(location src/stt/src/flt/etc/POWV9.dat)",
     tools = ["@tk_tcl//:tclsh"],
-)
-
-cc_library(
-    name = "logger",
-    srcs = [
-        "src/utl/src/CommandLineProgress.h",
-        "src/utl/src/Logger.cpp",
-        "src/utl/src/Metrics.cpp",
-        "src/utl/src/ScopedTemporaryFile.cpp",
-        "src/utl/src/prometheus/metrics_server.cpp",
-    ],
-    hdrs = [
-        "src/utl/include/utl/Logger.h",
-        "src/utl/include/utl/Metrics.h",
-        "src/utl/include/utl/Progress.h",
-        "src/utl/include/utl/ScopedTemporaryFile.h",
-    ] + glob([
-        "src/utl/include/utl/prometheus/*.h",
-    ]),
-    copts = [
-        "-fexceptions",
-        "-Wno-error",
-        "-Wall",
-        "-Wextra",
-        "-pedantic",
-        "-Wno-cast-qual",  # typically from TCL swigging
-        "-Wno-missing-braces",  # typically from TCL swigging
-        "-Wredundant-decls",
-        "-Wformat-security",
-        "-Wno-unused-parameter",
-        "-Wno-sign-compare",
-    ],
-    features = ["-use_header_modules"],
-    includes = [
-        "src/utl/include",
-        "src/utl/include/utl",
-        "src/utl/src",
-    ],
-    deps = [
-        "@boost.asio",
-        "@boost.beast",
-        "@spdlog",
-    ],
 )
 
 cc_library(
@@ -447,14 +402,6 @@ tcl_encode(
 )
 
 tcl_encode(
-    name = "utl_tcl",
-    srcs = [
-        "src/utl/src/Utl.tcl",
-    ],
-    char_array_name = "utl_tcl_inits",
-)
-
-tcl_encode(
     name = "upf_tcl",
     srcs = [
         "src/upf/src/upf.tcl",
@@ -565,21 +512,6 @@ tcl_wrap_cc(
     root_swig_src = "src/dpl/src/Opendp.i",
     swig_includes = [
         "src/dpl/src",
-    ],
-)
-
-tcl_wrap_cc(
-    name = "logger_swig",
-    srcs = [
-        "src/utl/src/Logger.i",
-        "src/utl/src/LoggerCommon.h",
-        ":error_swig",
-    ],
-    module = "utl",
-    namespace_prefix = "utl",
-    root_swig_src = "src/utl/src/Logger.i",
-    swig_includes = [
-        "src/utl/src",
     ],
 )
 
@@ -994,7 +926,7 @@ cc_library(
         "src/odb/src/lef/lefzlib",
     ],
     deps = [
-        ":logger",
+        "//src/utl",
         "@boost.algorithm",
         "@boost.bind",
         "@boost.config",
@@ -1050,7 +982,7 @@ cc_library(
         "src/odb/src/lef/lefzlib",
     ],
     deps = [
-        ":logger",
+        "//src/utl",
         "@zlib",
     ],
 )
@@ -1095,7 +1027,7 @@ cc_library(
         "src/odb/src/def/defzlib",
     ],
     deps = [
-        ":logger",
+        "//src/utl",
         ":opendb_lib",
         "@zlib",
     ],

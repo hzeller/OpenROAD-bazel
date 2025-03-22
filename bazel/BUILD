@@ -4,6 +4,7 @@ exports_files([
   "tcl_encode.bzl",
   "flex.bzl",
   "bison.bzl",
+  "tcl_wrap_cc.bzl",
 ])
 
 cc_library(

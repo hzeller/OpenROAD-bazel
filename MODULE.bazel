@@ -16,6 +16,7 @@ bazel_dep(name = "boost.asio", version = BOOST_VERSION)
 bazel_dep(name = "boost.beast", version = BOOST_VERSION)
 bazel_dep(name = "boost.bind", version = BOOST_VERSION)
 bazel_dep(name = "boost.config", version = BOOST_VERSION)
+bazel_dep(name = "boost.core", version = BOOST_VERSION)
 bazel_dep(name = "boost.fusion", version = BOOST_VERSION)
 bazel_dep(name = "boost.geometry", version = BOOST_VERSION)
 bazel_dep(name = "boost.graph", version = BOOST_VERSION)
@@ -42,3 +43,7 @@ bazel_dep(name = "zlib", version = "1.3.1.bcr.5")
 # ideally we could use this, need to figure out tcl situation so that it
 # works like before with org_swig.
 bazel_dep(name = "swig", version = "4.3.0")
+
+# Missing
+# lemon
+# cudd.h
