@@ -144,7 +144,7 @@ cc_library(
     features = ["-use_header_modules"],
     includes = OPENROAD_LIBRARY_INCLUDES,
     visibility = ["//visibility:public"],
-    deps = OPENROAD_LIBRARY_DEPS,
+    deps = OPENROAD_LIBRARY_DEPS + [":opendb_lib"],
 )
 
 genrule(
@@ -898,8 +898,8 @@ cc_library(
         "src/utl/include/utl/*.h",
         "src/odb/src/db/*.h",
     ]) + [
-         # these should not be here, they should come as a dependency
-	 # with //src/lef/src/lef once we have that
+        # these should not be here, they should come as a dependency
+        # with //src/lef/src/lef once we have that
         "src/odb/src/lef/lef/lefiArray.hpp",
         "src/odb/src/lef/lef/lefiCrossTalk.hpp",
         "src/odb/src/lef/lef/lefiDebug.hpp",
@@ -994,6 +994,7 @@ cc_library(
         "src/odb/src/lef/lefzlib",
     ],
     deps = [
+        ":opendb_lib",
         "//src/utl",
         "@zlib",
     ],
