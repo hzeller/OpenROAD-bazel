@@ -11,6 +11,9 @@ common --force_pic
 build --cxxopt "-std=c++17"        --host_cxxopt "-std=c++17"
 build --cxxopt "-ffp-contract=off" --host_cxxopt "-ffp-contract=off"
 
+# allow exceptions.
+build  --cxxopt=-fexceptions    --host_cxxopt=-fexceptions
+
 # Turn warnings on...
 build --copt "-Wall"               --host_copt "-Wall"
 build --copt "-Wextra"             --host_copt "-Wextra"
