@@ -950,6 +950,8 @@ cc_library(
         "@boost.polygon",
         "@boost.property_tree",
         "@boost.spirit",
+        "@boost.icl",
+        "@boost.stacktrace",
         "@spdlog",
         "@tk_tcl//:tcl",
         "@zlib",
