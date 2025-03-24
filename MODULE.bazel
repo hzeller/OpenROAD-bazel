@@ -13,7 +13,7 @@ bazel_dep(name = "rules_m4", version = "0.2.3")
 #   * https://github.com/boostorg/asio/issues/442i,
 #   * https://github.com/chriskohlhoff/asio/issues/1587
 # Fixed upstream, but need to wait for a release (1.88.0 ?) where that landed.
-OOST_VERSION = "1.83.0"
+BOOST_VERSION = "1.83.0"
 
 bazel_dep(name = "boost.algorithm", version = BOOST_VERSION)
 bazel_dep(name = "boost.asio", version = BOOST_VERSION)
