@@ -7,9 +7,13 @@ bazel_dep(name = "rules_bison", version = "0.3.1")
 bazel_dep(name = "rules_flex", version = "0.3.1")
 bazel_dep(name = "rules_m4", version = "0.2.3")
 
-# Not all boost libs are available at the latest version yet, so
-# use a slightly older one that has most of them.
-BOOST_VERSION = "1.83.0"
+# Not all boost libs are available at the latest version yet, so use a
+# slightly older one that has all we need.
+# When updating, note that boost.asio 1.87 is broken
+#   * https://github.com/boostorg/asio/issues/442i,
+#   * https://github.com/chriskohlhoff/asio/issues/1587
+# Fixed upstream, but need to wait for a release (1.88.0 ?) where that landed.
+OOST_VERSION = "1.83.0"
 
 bazel_dep(name = "boost.algorithm", version = BOOST_VERSION)
 bazel_dep(name = "boost.asio", version = BOOST_VERSION)
